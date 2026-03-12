@@ -1,30 +1,31 @@
 plugins {
    id 'java'
-   id 'com.github.johnrengelman.shadow' version '7.1.2'
+   id 'java-library'
+   id 'maven-publish'
 }
 
 dependencies {
    // common lib deps
-   implementation 'com.eclipsesource.minimal-json:minimal-json:0.9.5'
-   implementation 'me.carleslc.Simple-YAML:Simple-Yaml:1.8'
+   api 'com.eclipsesource.minimal-json:minimal-json:0.9.5'
+   // Simple-YAML is hosted on GitHub; resolve via JitPack coordinates
+   api 'com.github.carleslc:Simple-YAML:1.8'
 
    // Add graal dependencies
-   implementation "org.graalvm.js:js:${graalVersion}"
-   implementation "org.graalvm.sdk:graal-sdk:${graalVersion}"
-   implementation "org.graalvm.truffle:truffle-api:${graalVersion}"
-}
-
-jar {
-   archiveBaseName.set('grakkit')
-   archiveClassifier.set('common')
-   archiveVersion.set(project.property('grakkitVersion'))
-}
-
-shadowJar {
-   mergeServiceFiles()
+   api "org.graalvm.js:js:${graalVersion}"
+   api "org.graalvm.sdk:graal-sdk:${graalVersion}"
+   api "org.graalvm.truffle:truffle-api:${graalVersion}"
 }
 
 repositories {
    mavenCentral()
    maven { url = 'https://jitpack.io' }
+}
+
+publishing {
+   publications {
+      mavenJava(MavenPublication) {
+         from components.java
+         artifactId = 'common'
+      }
+   }
 }
